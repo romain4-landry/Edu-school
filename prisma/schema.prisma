@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  ENSEIGNANT
+  PARENT
+  CHARGE_ORIENTATION
+}
+
+model Utilisateur {
+  id             String   @id @default(uuid())
+  nom            String
+  prenom         String
+  email          String   @unique
+  motDePasseHash String
+  role           Role
+  actif          Boolean  @default(true)
+  creeLe         DateTime @default(now())
+
+  eleves       Eleve[]
+  affectations Affectation[]
+  decisions    DecisionOrientation[]
+
+  @@map("utilisateurs")
+}
+
+model Etablissement {
+  id      String   @id @default(uuid())
+  nom     String
+  ville   String
+  classes Classe[]
+
+  @@map("etablissements")
+}
+
+model AnneeScolaire {
+  id           String        @id @default(uuid())
+  libelle      String
+  dateDebut    DateTime
+  dateFin      DateTime
+  affectations Affectation[]
+
+  @@map("annees_scolaires")
+}
+
+model Classe {
+  id              String        @id @default(uuid())
+  nom             String
+  niveau          String
+  etablissementId String
+  etablissement   Etablissement @relation(fields: [etablissementId], references: [id])
+
+  eleves       Eleve[]
+  affectations Affectation[]
+
+  @@map("classes")
+}
+
+model Eleve {
+  id            String   @id @default(uuid())
+  matricule     String   @unique
+  nom           String
+  prenom        String
+  dateNaissance DateTime
+
+  classeId String
+  classe   Classe @relation(fields: [classeId], references: [id])
+
+  parentId String
+  parent   Utilisateur @relation(fields: [parentId], references: [id])
+
+  notes     Note[]
+  decisions DecisionOrientation[]
+
+  @@map("eleves")
+}
+
+model Matiere {
+  id           String        @id @default(uuid())
+  nom          String
+  code         String        @unique
+  coefficient  Int
+  affectations Affectation[]
+
+  @@map("matieres")
+}
+
+model Affectation {
+  id String @id @default(uuid())
+
+  enseignantId String
+  enseignant   Utilisateur @relation(fields: [enseignantId], references: [id])
+
+  matiereId String
+  matiere   Matiere @relation(fields: [matiereId], references: [id])
+
+  classeId String
+  classe   Classe @relation(fields: [classeId], references: [id])
+
+  anneeScolaireId String
+  anneeScolaire   AnneeScolaire @relation(fields: [anneeScolaireId], references: [id])
+
+  notes Note[]
+
+  @@unique([enseignantId, matiereId, classeId, anneeScolaireId])
+  @@map("affectations")
+}
+
+model Note {
+  id String @id @default(uuid())
+
+  eleveId String
+  eleve   Eleve @relation(fields: [eleveId], references: [id])
+
+  affectationId String
+  affectation   Affectation @relation(fields: [affectationId], references: [id])
+
+  valeur     Decimal  @db.Decimal(4, 2)
+  sequence   String
+  dateSaisie DateTime @default(now())
+
+  @@map("notes")
+}
+
+model DecisionOrientation {
+  id String @id @default(uuid())
+
+  eleveId String
+  eleve   Eleve @relation(fields: [eleveId], references: [id])
+
+  chargeId String
+  charge   Utilisateur @relation(fields: [chargeId], references: [id])
+
+  filiereProposee String
+  justification   String
+  statut          String   @default("PROPOSEE")
+  dateEmission    DateTime @default(now())
+
+  commentaires Commentaire[]
+
+  @@map("decisions_orientation")
+}
+
+model Commentaire {
+  id String @id @default(uuid())
+
+  decisionId String
+  decision   DecisionOrientation @relation(fields: [decisionId], references: [id])
+
+  contenu   String
+  dateEnvoi DateTime @default(now())
+
+  @@map("commentaires")
+}
