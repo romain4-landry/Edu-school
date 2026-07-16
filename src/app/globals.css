@@ -2,26 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-background text-white;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .card-glass {
+    @apply rounded-xl border border-white/10 bg-surface/60 backdrop-blur-md shadow-lg;
+  }
+
+  .btn-accent {
+    @apply rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-background transition hover:bg-accent-dark;
+  }
+
+  .btn-outline {
+    @apply rounded-md border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white/40;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-accent bg-clip-text text-transparent;
+  }
+
+  .input-dark {
+    @apply w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/40 outline-none focus:border-accent;
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+select.input-dark option {
+  color: #111716;
+  background-color: #ffffff;
 }

@@ -33,40 +33,28 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-8">
+    <main className="flex min-h-screen items-center justify-center bg-background p-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+        className="card-glass w-full max-w-sm space-y-4 p-8"
       >
-        <h1 className="text-xl font-semibold">Connexion — EDU SCHOOL</h1>
+        <h1 className="text-xl font-bold">
+          Connexion — <span className="text-gradient">EDU SCHOOL</span>
+        </h1>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Email</label>
-          <input
-            name="email"
-            type="email"
-            required
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
+          <label className="mb-1 block text-sm text-white/70">Email</label>
+          <input name="email" type="email" required className="input-dark" />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Mot de passe</label>
-          <input
-            name="password"
-            type="password"
-            required
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
+          <label className="mb-1 block text-sm text-white/70">Mot de passe</label>
+          <input name="password" type="password" required className="input-dark" />
         </div>
 
-        {erreur && <p className="text-sm text-red-600">{erreur}</p>}
+        {erreur && <p className="text-sm text-red-400">{erreur}</p>}
 
-        <button
-          type="submit"
-          disabled={chargement}
-          className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-        >
+        <button type="submit" disabled={chargement} className="btn-accent w-full disabled:opacity-50">
           {chargement ? "Connexion..." : "Se connecter"}
         </button>
       </form>
