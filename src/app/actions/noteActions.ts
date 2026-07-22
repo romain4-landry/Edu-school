@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { envoyerNotificationParent } from "@/lib/resend";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -23,6 +24,7 @@ export async function saisirNote(input: z.infer<typeof SaisieNoteSchema>) {
 
   const affectation = await prisma.affectation.findUnique({
     where: { id: data.affectationId },
+    include: { matiere: true },
   });
 
   if (!affectation || affectation.enseignantId !== session.user.id) {
@@ -38,6 +40,31 @@ export async function saisirNote(input: z.infer<typeof SaisieNoteSchema>) {
     },
   });
 
+  const eleve = await prisma.eleve.findUnique({
+    where: { id: data.eleveId },
+    include: { parent: true },
+  });
+
+  if (eleve?.parent?.email) {
+    try {
+      await envoyerNotificationParent({
+        to: eleve.parent.email,
+        eleveNomComplet: `${eleve.prenom} ${eleve.nom}`,
+        sujet: "Nouvelle note enregistrée",
+        message: `Une nouvelle note de <strong>${data.valeur}/20</strong> a été enregistrée en <strong>${affectation.matiere.nom}</strong> pour la séquence ${data.sequence}.`,
+      });
+      console.log(`Email de notification envoyé à ${eleve.parent.email}`);
+    } catch (e) {
+      console.error("Échec de l'envoi de la notification email :", e);
+    }
+  }
+
   revalidatePath(`/enseignant/affectation/${data.affectationId}`);
-  return note;
+
+  // On ne retourne que des types simples (pas l'objet Prisma brut avec son Decimal)
+  return {
+    id: note.id,
+    valeur: Number(note.valeur),
+    sequence: note.sequence,
+  };
 }
