@@ -27,7 +27,7 @@ export default async function AffectationDetailPage({ params }: { params: { id: 
   });
 
   return (
-    <main className="min-h-screen bg-background p-8">
+    <main className="mx-auto max-w-6xl p-8">
       <h1 className="text-2xl font-bold">
         <span className="text-gradient">{affectation.matiere.nom}</span> — {affectation.classe.nom}
       </h1>

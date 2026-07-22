@@ -1,11 +1,29 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+
+const REDIRECTION_PAR_ROLE: Record<string, string> = {
+  ADMIN: "/admin",
+  ENSEIGNANT: "/enseignant",
+  PARENT: "/parent",
+  CHARGE_ORIENTATION: "/orientation",
+};
+
+const LABELS_ROLE: Record<string, string> = {
+  ADMIN: "Administrateur",
+  ENSEIGNANT: "Enseignant",
+  PARENT: "Parent",
+  CHARGE_ORIENTATION: "Chargé d'orientation",
+};
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const roleChoisi = searchParams.get("role");
+
   const [erreur, setErreur] = useState<string | null>(null);
   const [chargement, setChargement] = useState(false);
 
@@ -21,14 +39,25 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    setChargement(false);
-
     if (res?.error) {
+      setChargement(false);
       setErreur("Email ou mot de passe incorrect.");
       return;
     }
 
-    router.push("/");
+    const session = await getSession();
+    const roleReel = session?.user?.role ?? "";
+
+    if (roleChoisi && roleReel !== roleChoisi) {
+      setChargement(false);
+      setErreur(
+        `Ce compte correspond à l'espace "${LABELS_ROLE[roleReel] ?? roleReel}", pas à "${LABELS_ROLE[roleChoisi] ?? roleChoisi}".`
+      );
+      return;
+    }
+
+    const destination = REDIRECTION_PAR_ROLE[roleReel] ?? "/";
+    router.push(destination);
     router.refresh();
   }
 
@@ -38,9 +67,16 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="card-glass w-full max-w-sm space-y-4 p-8"
       >
-        <h1 className="text-xl font-bold">
-          Connexion — <span className="text-gradient">EDU SCHOOL</span>
-        </h1>
+        <div>
+          <h1 className="text-xl font-bold">
+            Connexion — <span className="text-gradient">EDU SCHOOL</span>
+          </h1>
+          {roleChoisi && (
+            <p className="mt-1 text-sm text-white/50">
+              Espace {LABELS_ROLE[roleChoisi] ?? roleChoisi}
+            </p>
+          )}
+        </div>
 
         <div>
           <label className="mb-1 block text-sm text-white/70">Email</label>
@@ -57,6 +93,10 @@ export default function LoginPage() {
         <button type="submit" disabled={chargement} className="btn-accent w-full disabled:opacity-50">
           {chargement ? "Connexion..." : "Se connecter"}
         </button>
+
+        <Link href="/espace" className="block text-center text-sm text-white/40 hover:text-white/60">
+          ← Changer d'espace
+        </Link>
       </form>
     </main>
   );

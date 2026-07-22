@@ -16,7 +16,7 @@ export default async function AcademiquePage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-background p-8">
+    <main className="mx-auto max-w-6xl p-8">
       <h1 className="text-2xl font-bold">
         Gestion <span className="text-gradient">académique</span>
       </h1>

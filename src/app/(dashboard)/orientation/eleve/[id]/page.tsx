@@ -23,7 +23,7 @@ export default async function OrientationEleveDetailPage({ params }: { params: {
       : null;
 
   return (
-    <main className="min-h-screen bg-background p-8">
+    <main className="mx-auto max-w-6xl p-8">
       <h1 className="text-2xl font-bold">
         <span className="text-gradient">{eleve.prenom} {eleve.nom}</span>
       </h1>

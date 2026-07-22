@@ -9,15 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0B0F0E",
-        surface: "#111716",
+        background: "#0B0E14",
+        surface: "#111721",
         accent: {
-          DEFAULT: "#00E5A0",
-          dark: "#00B37D",
+          DEFAULT: "#1466D6",
+          dark: "#0F4FA8",
         },
       },
       backgroundImage: {
-        "gradient-accent": "linear-gradient(90deg, #00E5A0 0%, #5FF5C4 100%)",
+        "gradient-accent": "linear-gradient(90deg, #1466D6 0%, #5FA8F5 100%)",
       },
     },
   },

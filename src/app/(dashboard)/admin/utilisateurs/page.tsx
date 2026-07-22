@@ -15,7 +15,7 @@ export default async function UtilisateursPage() {
   });
 
   return (
-    <main className="min-h-screen bg-background p-8">
+    <main className="mx-auto max-w-6xl p-8">
       <h1 className="text-2xl font-bold">
         Gestion des <span className="text-gradient">utilisateurs</span>
       </h1>

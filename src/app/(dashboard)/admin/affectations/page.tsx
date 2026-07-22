@@ -14,7 +14,7 @@ export default async function AffectationsPage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-background p-8">
+    <main className="mx-auto max-w-6xl p-8">
       <h1 className="text-2xl font-bold">
         Gestion des <span className="text-gradient">affectations</span>
       </h1>
